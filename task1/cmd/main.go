@@ -21,7 +21,7 @@ func main() {
 	}
 
 	fmt.Println("Сгенерированные люди:")
-	for i, v :=  range humans {
+	for i, v := range humans {
 		fmt.Printf("№%d:\tВозраст: %d,\tИмя: %s\n", i+1, v.Age, v.Name)
 	}
 
@@ -36,11 +36,11 @@ func main() {
 	humans = service.SortHumansByAge(minAge, humans)
 
 	fmt.Printf("Люди c возрастом %d (включительно) и старше:", minAge)
-	if len(humans)==0 {
+	if len(humans) == 0 {
 		fmt.Println(" не найдены.")
 		return
 	}
-	for i, v :=  range humans {
+	for i, v := range humans {
 		fmt.Printf("\n№%d:\tВозраст: %d,\tИмя: %s", i+1, v.Age, v.Name)
 	}
 
