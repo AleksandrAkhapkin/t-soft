@@ -85,3 +85,24 @@ func (s *Service) GetUserByID(userID int) (*types.User, error) {
 
 	return user, nil
 }
+
+//Изменить пользователя по айди
+func (s *Service) PutUserByID(newUser *types.User) error {
+
+	var err error
+
+	//задаем возраст
+	newUser.Age, err = userAgeCalculator(newUser.Birthday)
+	if err != nil {
+		logger.LogError(errors.Wrap(err, "err in service PutUserByID "))
+		return infrastruct.ErrorBadRequest
+	}
+
+	//изменяем пользователя по айди
+	if err = s.p.PutUserByID(newUser); err != nil {
+		logger.LogError(errors.Wrap(err, "err in service PutUserByID "))
+		return infrastruct.ErrorInternalServerError
+	}
+
+	return nil
+}

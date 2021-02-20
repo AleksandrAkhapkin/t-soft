@@ -17,7 +17,10 @@ func NewRouter(h *handlers.Handlers) *mux.Router {
 	router.Methods(http.MethodGet).Path("/users").HandlerFunc(h.GetAllUsers)
 
 	//Получить пользователя по указанному [ID?]
-	router.Methods(http.MethodGet).Path("/users/{idStudent:[0-9]+}").HandlerFunc(h.GetUserByID)
+	router.Methods(http.MethodGet).Path("/users/{userID:[0-9]+}").HandlerFunc(h.GetUserByID)
+
+	//Изменить пользователя по указанному ID
+	router.Methods(http.MethodPut).Path("/users/{userID:[0-9]+}").HandlerFunc(h.PutUserByID)
 
 	return router
 

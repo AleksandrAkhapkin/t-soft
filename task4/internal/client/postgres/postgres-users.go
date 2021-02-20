@@ -60,3 +60,14 @@ func (p *Postgres) GetUserByID(userID int) (*types.User, error) {
 
 	return &user, nil
 }
+
+func (p *Postgres) PutUserByID(newUser *types.User) error {
+
+	_, err := p.db.Exec("UPDATE tb_user5 SET name = $1, birthday = $2, age = $3, is_male = $4 WHERE id = $5",
+		newUser.Name, newUser.Birthday, newUser.Age, newUser.IsMale, newUser.ID)
+	if err != nil {
+		return errors.Wrap(err, "in pq PutUserByID with Exec")
+	}
+
+	return nil
+}

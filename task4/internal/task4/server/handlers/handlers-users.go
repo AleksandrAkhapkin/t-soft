@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"encoding/json"
+	"github.com/AleksandrAkhapkin/testTNS/task4/internal/task4/types"
 	"github.com/AleksandrAkhapkin/testTNS/task4/pkg/infrastruct"
 	"github.com/AleksandrAkhapkin/testTNS/task4/pkg/logger"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 //Получить весь справочник
@@ -49,12 +52,14 @@ func (h *Handlers) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 //Получить пользователя по ID
 func (h *Handlers) GetUserByID(w http.ResponseWriter, r *http.Request) {
 
-	userID, err := strconv.Atoi(mux.Vars(r)["idStudent"])
+	//получаем айди пользователя
+	userID, err := strconv.Atoi(mux.Vars(r)["userID"])
 	if err != nil {
 		apiErrorEncode(w, infrastruct.ErrorBadRequest)
 		return
 	}
 
+	//получаем пользователя
 	user, err := h.srv.GetUserByID(userID)
 	if err != nil {
 		apiErrorEncode(w, err)
@@ -62,4 +67,42 @@ func (h *Handlers) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	apiResponseEncoder(w, user)
+}
+
+//Изменить пользователя по ID
+func (h *Handlers) PutUserByID(w http.ResponseWriter, r *http.Request) {
+
+	//получаем айди пользователя
+	userID, err := strconv.Atoi(mux.Vars(r)["userID"])
+	if err != nil {
+		apiErrorEncode(w, infrastruct.ErrorBadRequest)
+		return
+	}
+
+	//декодирум новые полученные значения
+	newUser := types.User{}
+	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
+		apiErrorEncode(w, infrastruct.ErrorBadRequest)
+		return
+	}
+	newUser.ID = userID
+
+	//проверяем что новые значения не пустые
+	if newUser.Birthday == "" || newUser.Name == "" {
+		apiErrorEncode(w, infrastruct.ErrorBadRequest)
+		return
+	}
+
+	//проверяем что мы можем распарсить полученную дату
+	if _, err = time.Parse(time.RFC3339, newUser.Birthday); err != nil {
+		apiErrorEncode(w, infrastruct.ErrorBadRequest)
+		return
+	}
+
+	//изменяем данные
+	err = h.srv.PutUserByID(&newUser)
+	if err != nil {
+		apiErrorEncode(w, err)
+		return
+	}
 }
