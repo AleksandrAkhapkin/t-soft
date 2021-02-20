@@ -23,6 +23,7 @@ func (h *Handlers) Ping(w http.ResponseWriter, _ *http.Request) {
 	_, _ = w.Write([]byte("pong"))
 }
 
+//Пишет в респонс код ошибки и ошибку в формате json
 func apiErrorEncode(w http.ResponseWriter, err error) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -42,6 +43,7 @@ func apiErrorEncode(w http.ResponseWriter, err error) {
 	}
 }
 
+//Пишет в респонс в формате json со статусом 200
 func apiResponseEncoder(w http.ResponseWriter, res interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if err := json.NewEncoder(w).Encode(res); err != nil {
