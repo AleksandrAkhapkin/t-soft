@@ -21,4 +21,5 @@ func (c *CustomError) Error() string {
 var (
 	ErrorInternalServerError = NewError("Внутренняя ошибка сервера", http.StatusInternalServerError)
 	ErrorBadRequest          = NewError("Плохие входные данные", http.StatusBadRequest)
+	ErrorUserNotFound        = NewError("Результаты по вашему запросу не найдены", http.StatusOK)
 )
