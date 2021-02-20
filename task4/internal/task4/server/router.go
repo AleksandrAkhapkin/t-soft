@@ -16,6 +16,9 @@ func NewRouter(h *handlers.Handlers) *mux.Router {
 	//(возможно добавление квери параметра minAge задающего минимальный возраст возвращаемых пользователей (включительно))
 	router.Methods(http.MethodGet).Path("/users").HandlerFunc(h.GetAllUsers)
 
+	//Получить пользователя по указанному [ID?]
+	router.Methods(http.MethodGet).Path("/users/{idStudent:[0-9]+}").HandlerFunc(h.GetUserByID)
+
 	return router
 
 }
