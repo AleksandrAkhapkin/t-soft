@@ -47,3 +47,28 @@ func userAgeCalculator(bday string) (int, error) {
 
 	return years, nil
 }
+
+//Получить пользователей с возрастом более minAge (включительно)
+func (s *Service) GetUsersWithMinAge(minAge int) ([]types.User, error) {
+
+	//считаем максимальную дату рождения которая подходит для заданного возраста
+	now := time.Now()
+	maxBDay := now.AddDate(-1*minAge, 0, 0).Format("2006-01-02")
+
+	//получаем пользователей с датой рождения которая подходит для заданного возраста
+	users, err := s.p.GetUserWithMaxBDay(maxBDay)
+	if err != nil {
+		logger.LogError(errors.Wrap(err, "err in GetUserWithMinBDay"))
+		return nil, infrastruct.ErrorInternalServerError
+	}
+
+	//задаем возраст пользователей
+	for i, _ := range users {
+		users[i].Age, err = userAgeCalculator(users[i].Birthday)
+		if err != nil {
+			return nil, errors.Wrap(err, "err in GetUsersWithMinAge ")
+		}
+	}
+
+	return users, nil
+}
