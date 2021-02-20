@@ -1,5 +1,7 @@
 package infrastruct
 
+import "net/http"
+
 type CustomError struct {
 	msg  string
 	Code int
@@ -16,4 +18,6 @@ func (c *CustomError) Error() string {
 	return c.msg
 }
 
-var ()
+var (
+	ErrorInternalServerError = NewError("внутренняя ошибка сервера", http.StatusInternalServerError)
+)
