@@ -24,3 +24,23 @@ func (p *Postgres) GetAllUsers() ([]types.User, error) {
 
 	return users, nil
 }
+
+//Получить пользователей с датой рождения не больше maxBDay (включительно)
+func (p *Postgres) GetUserWithMaxBDay(maxBDay string) ([]types.User, error) {
+
+	users := make([]types.User, 0)
+	rows, err := p.db.Query("SELECT id, name, birthday, is_male FROM tb_user5 WHERE birthday <= $1", maxBDay)
+	if err != nil {
+		return nil, errors.Wrap(err, "with Query")
+	}
+	defer rows.Close()
+	user := types.User{}
+	for rows.Next() {
+		if err = rows.Scan(&user.ID, &user.Name, &user.Birthday, &user.IsMale); err != nil {
+			return nil, errors.Wrap(err, "with Scan")
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
