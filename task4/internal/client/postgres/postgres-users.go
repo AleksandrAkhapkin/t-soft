@@ -44,3 +44,19 @@ func (p *Postgres) GetUserWithMaxBDay(maxBDay string) ([]types.User, error) {
 
 	return users, nil
 }
+
+//Получить пользователя по ID
+func (p *Postgres) GetUserByID(userID int) (*types.User, error) {
+
+	user := types.User{ID: userID}
+	err := p.db.QueryRow("SELECT name, birthday, is_male FROM tb_user5 WHERE id = $1", userID).Scan(
+		&user.Name,
+		&user.Birthday,
+		&user.IsMale,
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "in pg GetAllUsers with QueryRow")
+	}
+
+	return &user, nil
+}

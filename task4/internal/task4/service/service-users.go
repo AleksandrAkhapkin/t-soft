@@ -72,3 +72,26 @@ func (s *Service) GetUsersWithMinAge(minAge int) ([]types.User, error) {
 
 	return users, nil
 }
+
+//Получить пользователя по айди
+func (s *Service) GetUserByID(userID int) (*types.User, error) {
+
+	//получаем пользователя по айди
+	user, err := s.p.GetUserByID(userID)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			logger.LogError(errors.Wrap(err, "err in service GetUserByID "))
+			return nil, infrastruct.ErrorInternalServerError
+		}
+		return nil, infrastruct.ErrorUserNotFound
+	}
+
+	//задаем возраст
+	user.Age, err = userAgeCalculator(user.Birthday)
+	if err != nil {
+		logger.LogError(errors.Wrap(err, "err in service GetUserByID "))
+		return nil, infrastruct.ErrorInternalServerError
+	}
+
+	return user, nil
+}

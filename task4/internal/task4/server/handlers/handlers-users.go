@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/AleksandrAkhapkin/testTNS/task4/pkg/infrastruct"
 	"github.com/AleksandrAkhapkin/testTNS/task4/pkg/logger"
+	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
@@ -43,4 +44,22 @@ func (h *Handlers) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	apiResponseEncoder(w, users)
+}
+
+//Получить пользователя по ID
+func (h *Handlers) GetUserByID(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := strconv.Atoi(mux.Vars(r)["idStudent"])
+	if err != nil {
+		apiErrorEncode(w, infrastruct.ErrorBadRequest)
+		return
+	}
+
+	user, err := h.srv.GetUserByID(userID)
+	if err != nil {
+		apiErrorEncode(w, err)
+		return
+	}
+
+	apiResponseEncoder(w, user)
 }
