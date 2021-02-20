@@ -11,13 +11,13 @@ func (p *Postgres) GetAllUsers() ([]types.User, error) {
 	users := make([]types.User, 0)
 	rows, err := p.db.Query("SELECT id, name, birthday, is_male FROM tb_user5 ")
 	if err != nil {
-		return nil, errors.Wrap(err, "err with Query")
+		return nil, errors.Wrap(err, "in pg GetAllUsers with Query")
 	}
 	defer rows.Close()
 	user := types.User{}
 	for rows.Next() {
 		if err = rows.Scan(&user.ID, &user.Name, &user.Birthday, &user.IsMale); err != nil {
-			return nil, errors.Wrap(err, "err with Scan")
+			return nil, errors.Wrap(err, "in pg GetAllUsers with Scan")
 		}
 		users = append(users, user)
 	}
@@ -31,13 +31,13 @@ func (p *Postgres) GetUserWithMaxBDay(maxBDay string) ([]types.User, error) {
 	users := make([]types.User, 0)
 	rows, err := p.db.Query("SELECT id, name, birthday, is_male FROM tb_user5 WHERE birthday <= $1", maxBDay)
 	if err != nil {
-		return nil, errors.Wrap(err, "with Query")
+		return nil, errors.Wrap(err, "in pg GetAllUsers with Query")
 	}
 	defer rows.Close()
 	user := types.User{}
 	for rows.Next() {
 		if err = rows.Scan(&user.ID, &user.Name, &user.Birthday, &user.IsMale); err != nil {
-			return nil, errors.Wrap(err, "with Scan")
+			return nil, errors.Wrap(err, "in pg GetAllUsers with Scan")
 		}
 		users = append(users, user)
 	}

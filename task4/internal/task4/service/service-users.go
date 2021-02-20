@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"github.com/AleksandrAkhapkin/testTNS/task4/internal/task4/types"
 	"github.com/AleksandrAkhapkin/testTNS/task4/pkg/infrastruct"
 	"github.com/AleksandrAkhapkin/testTNS/task4/pkg/logger"
@@ -14,38 +15,23 @@ func (s *Service) GetAllUsers() ([]types.User, error) {
 	//получаем всех пользователей
 	users, err := s.p.GetAllUsers()
 	if err != nil {
-		err = errors.Wrap(err, "err in GetAllUsers ")
-		logger.LogError(err)
-		return nil, infrastruct.ErrorInternalServerError
+		if err != sql.ErrNoRows {
+			logger.LogError(errors.Wrap(err, "err in service GetAllUsers "))
+			return nil, infrastruct.ErrorInternalServerError
+		}
+		return nil, infrastruct.ErrorUserNotFound
 	}
 
 	//задаем возраст пользователей
 	for i, _ := range users {
 		users[i].Age, err = userAgeCalculator(users[i].Birthday)
 		if err != nil {
-			return nil, errors.Wrap(err, "err in GetAllUsers ")
+			logger.LogError(errors.Wrap(err, "err in service GetAllUsers "))
+			return nil, infrastruct.ErrorInternalServerError
 		}
 	}
 
 	return users, nil
-}
-
-//Принимает дату рождения, возвращает текущий возраст
-func userAgeCalculator(bday string) (int, error) {
-
-	now := time.Now()
-
-	birthday, err := time.Parse(time.RFC3339, bday)
-	if err != nil {
-		return 0, errors.Wrap(err, "in userAgeCalculator with time.Parse")
-	}
-
-	years := now.Year() - birthday.Year()
-	if now.YearDay() < birthday.YearDay() {
-		years--
-	}
-
-	return years, nil
 }
 
 //Получить пользователей с возрастом более minAge (включительно)
@@ -58,15 +44,19 @@ func (s *Service) GetUsersWithMinAge(minAge int) ([]types.User, error) {
 	//получаем пользователей с датой рождения которая подходит для заданного возраста
 	users, err := s.p.GetUserWithMaxBDay(maxBDay)
 	if err != nil {
-		logger.LogError(errors.Wrap(err, "err in GetUserWithMinBDay"))
-		return nil, infrastruct.ErrorInternalServerError
+		if err != sql.ErrNoRows {
+			logger.LogError(errors.Wrap(err, "err in service GetUserWithMinBDay "))
+			return nil, infrastruct.ErrorInternalServerError
+		}
+		return nil, infrastruct.ErrorUserNotFound
 	}
 
 	//задаем возраст пользователей
 	for i, _ := range users {
 		users[i].Age, err = userAgeCalculator(users[i].Birthday)
 		if err != nil {
-			return nil, errors.Wrap(err, "err in GetUsersWithMinAge ")
+			logger.LogError(errors.Wrap(err, "err in service GetUserWithMinBDay "))
+			return nil, infrastruct.ErrorInternalServerError
 		}
 	}
 
