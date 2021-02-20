@@ -95,12 +95,30 @@ func (h *Handlers) PutUserByID(w http.ResponseWriter, r *http.Request) {
 
 	//проверяем что мы можем распарсить полученную дату
 	if _, err = time.Parse(time.RFC3339, newUser.Birthday); err != nil {
-		apiErrorEncode(w, infrastruct.ErrorBadRequest)
+		apiErrorEncode(w, infrastruct.ErrorDataIsInvalid)
 		return
 	}
 
 	//изменяем данные
 	err = h.srv.PutUserByID(&newUser)
+	if err != nil {
+		apiErrorEncode(w, err)
+		return
+	}
+}
+
+//Удалить пользователя по ID
+func (h *Handlers) DelUserByID(w http.ResponseWriter, r *http.Request) {
+
+	//получаем айди пользователя
+	userID, err := strconv.Atoi(mux.Vars(r)["userID"])
+	if err != nil {
+		apiErrorEncode(w, infrastruct.ErrorBadRequest)
+		return
+	}
+
+	//удаляем пользователя
+	err = h.srv.DelUserByID(userID)
 	if err != nil {
 		apiErrorEncode(w, err)
 		return

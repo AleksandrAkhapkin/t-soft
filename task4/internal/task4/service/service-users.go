@@ -106,3 +106,15 @@ func (s *Service) PutUserByID(newUser *types.User) error {
 
 	return nil
 }
+
+//Удалить пользователя по айди
+func (s *Service) DelUserByID(userID int) error {
+
+	//удаляем пользователя по айди
+	if err := s.p.DelUserByID(userID); err != nil {
+		logger.LogError(errors.Wrap(err, "err in service DelUserByID "))
+		return infrastruct.ErrorInternalServerError
+	}
+
+	return nil
+}
