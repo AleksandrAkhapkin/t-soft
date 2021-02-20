@@ -11,6 +11,7 @@ import (
 //Получить весь справочник
 func (s *Service) GetAllUsers() ([]types.User, error) {
 
+	//получаем всех пользователей
 	users, err := s.p.GetAllUsers()
 	if err != nil {
 		err = errors.Wrap(err, "err in GetAllUsers ")
@@ -18,22 +19,31 @@ func (s *Service) GetAllUsers() ([]types.User, error) {
 		return nil, infrastruct.ErrorInternalServerError
 	}
 
-	now := time.Now()
+	//задаем возраст пользователей
 	for i, _ := range users {
-		birthday, err := time.Parse(time.RFC3339, users[i].Birthday)
+		users[i].Age, err = userAgeCalculator(users[i].Birthday)
 		if err != nil {
-			err = errors.Wrap(err, "err in GetAllUsers with time.Parse")
-			logger.LogError(err)
-			return nil, infrastruct.ErrorInternalServerError
+			return nil, errors.Wrap(err, "err in GetAllUsers ")
 		}
-
-		years := now.Year() - birthday.Year()
-		if now.YearDay() < birthday.YearDay() {
-			years--
-		}
-
-		users[i].Age = years
 	}
 
 	return users, nil
+}
+
+//Принимает дату рождения, возвращает текущий возраст
+func userAgeCalculator(bday string) (int, error) {
+
+	now := time.Now()
+
+	birthday, err := time.Parse(time.RFC3339, bday)
+	if err != nil {
+		return 0, errors.Wrap(err, "in userAgeCalculator with time.Parse")
+	}
+
+	years := now.Year() - birthday.Year()
+	if now.YearDay() < birthday.YearDay() {
+		years--
+	}
+
+	return years, nil
 }
