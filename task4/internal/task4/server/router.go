@@ -19,6 +19,9 @@ func NewRouter(h *handlers.Handlers) *mux.Router {
 	//Получить пользователя по указанному [ID?]
 	router.Methods(http.MethodGet).Path("/users/{userID:[0-9]+}").HandlerFunc(h.GetUserByID)
 
+	//Создать пользователя
+	router.Methods(http.MethodPost).Path("/users").HandlerFunc(h.MakeUser)
+
 	//Изменить пользователя по указанному ID
 	router.Methods(http.MethodPut).Path("/users/{userID:[0-9]+}").HandlerFunc(h.PutUserByID)
 

@@ -61,6 +61,19 @@ func (p *Postgres) GetUserByID(userID int) (*types.User, error) {
 	return &user, nil
 }
 
+//Создать пользователя и получить его ID
+func (p *Postgres) MakeUser(newUser *types.User) (int64, error) {
+
+	var userID int64
+	err := p.db.QueryRow("INSERT INTO tb_user5 (name, birthday, age, is_male) VALUES ($1, $2, $3, $4) RETURNING id",
+		newUser.Name, newUser.Birthday, newUser.Age, newUser.IsMale).Scan(&userID)
+	if err != nil {
+		return 0, errors.Wrap(err, "in pq MakeUser with QueryRow")
+	}
+
+	return userID, nil
+}
+
 //Изменить пользователя
 func (p *Postgres) PutUserByID(newUser *types.User) error {
 

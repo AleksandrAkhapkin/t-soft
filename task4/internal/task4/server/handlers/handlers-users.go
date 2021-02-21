@@ -69,6 +69,43 @@ func (h *Handlers) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	apiResponseEncoder(w, user)
 }
 
+//Создать пользователя
+func (h *Handlers) MakeUser(w http.ResponseWriter, r *http.Request) {
+
+	//декодирум новые полученные значения
+	newUser := types.User{}
+	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
+		apiErrorEncode(w, infrastruct.ErrorBadRequest)
+		return
+	}
+
+	//проверяем что значения не пустые
+	if newUser.Birthday == "" || newUser.Name == "" {
+		apiErrorEncode(w, infrastruct.ErrorBadRequest)
+		return
+	}
+
+	//проверяем что мы можем распарсить полученную дату
+	if _, err := time.Parse(time.RFC3339, newUser.Birthday); err != nil {
+		apiErrorEncode(w, infrastruct.ErrorDataIsInvalid)
+		return
+	}
+
+	//Создаем пользователя
+	userID, err := h.srv.MakeUser(&newUser)
+	if err != nil {
+		apiErrorEncode(w, err)
+		return
+	}
+
+	newRegister := &types.NewRegister{
+		Message: "Пользователь успешно зарегистрирован",
+		ID:      userID,
+	}
+
+	apiResponseEncoder(w, newRegister)
+}
+
 //Изменить пользователя по ID
 func (h *Handlers) PutUserByID(w http.ResponseWriter, r *http.Request) {
 

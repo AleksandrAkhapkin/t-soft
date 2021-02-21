@@ -86,6 +86,28 @@ func (s *Service) GetUserByID(userID int) (*types.User, error) {
 	return user, nil
 }
 
+//Создать нового пользователя, возвращает его ID
+func (s *Service) MakeUser(newUser *types.User) (int64, error) {
+
+	var err error
+
+	//задаем возраст
+	newUser.Age, err = userAgeCalculator(newUser.Birthday)
+	if err != nil {
+		logger.LogError(errors.Wrap(err, "err in service MakeUser "))
+		return 0, infrastruct.ErrorBadRequest
+	}
+
+	//Создаем нового пользователя
+	userID, err := s.p.MakeUser(newUser)
+	if err != nil {
+		logger.LogError(errors.Wrap(err, "err in service MakeUser "))
+		return 0, infrastruct.ErrorInternalServerError
+	}
+
+	return userID, nil
+}
+
 //Изменить пользователя по айди
 func (s *Service) PutUserByID(newUser *types.User) error {
 
