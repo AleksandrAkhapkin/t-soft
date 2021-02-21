@@ -6,9 +6,9 @@ type Service struct {
 	p *postgres.Postgres
 }
 
-func NewService(pq *postgres.Postgres) (*Service, error) {
+func NewService(pq *postgres.Postgres) *Service {
 
 	return &Service{
 		p: pq,
-	}, nil
+	}
 }
