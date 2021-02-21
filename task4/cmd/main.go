@@ -11,10 +11,13 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
 
+	//флаг - путь до конфига
 	configPath := new(string)
 	flag.StringVar(configPath, "config-path", "config/config.yaml", "path to yaml config")
 	flag.Parse()
@@ -40,6 +43,22 @@ func main() {
 	}
 
 	handls := handlers.NewHandlers(srv)
+
+	//Корректное закрытие базы при получении сигнала
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan,
+		syscall.SIGHUP,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGQUIT)
+	go func() {
+		_ = <-sigChan
+		logger.LogInfo("Finish service")
+		if err := pq.Close(); err != nil {
+			logger.LogFatal(err)
+		}
+		os.Exit(0)
+	}()
 
 	server.StartServer(handls, cnf.ServerPort)
 }
