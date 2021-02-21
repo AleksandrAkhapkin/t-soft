@@ -64,7 +64,7 @@ func (s *Service) GetUsersWithMinAge(minAge int) ([]types.User, error) {
 }
 
 //Получить пользователя по айди
-func (s *Service) GetUserByID(userID int) (*types.User, error) {
+func (s *Service) GetUserByID(userID int64) (*types.User, error) {
 
 	//получаем пользователя по айди
 	user, err := s.p.GetUserByID(userID)
@@ -130,7 +130,7 @@ func (s *Service) PutUserByID(newUser *types.User) error {
 }
 
 //Удалить пользователя по айди
-func (s *Service) DelUserByID(userID int) error {
+func (s *Service) DelUserByID(userID int64) error {
 
 	//удаляем пользователя по айди
 	if err := s.p.DelUserByID(userID); err != nil {

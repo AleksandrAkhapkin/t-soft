@@ -53,7 +53,7 @@ func (h *Handlers) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 func (h *Handlers) GetUserByID(w http.ResponseWriter, r *http.Request) {
 
 	//получаем айди пользователя
-	userID, err := strconv.Atoi(mux.Vars(r)["userID"])
+	userID, err := strconv.ParseInt(mux.Vars(r)["userID"], 10, 64)
 	if err != nil {
 		apiErrorEncode(w, infrastruct.ErrorBadRequest)
 		return
@@ -110,7 +110,7 @@ func (h *Handlers) MakeUser(w http.ResponseWriter, r *http.Request) {
 func (h *Handlers) PutUserByID(w http.ResponseWriter, r *http.Request) {
 
 	//получаем айди пользователя
-	userID, err := strconv.Atoi(mux.Vars(r)["userID"])
+	userID, err := strconv.ParseInt(mux.Vars(r)["userID"], 10, 64)
 	if err != nil {
 		apiErrorEncode(w, infrastruct.ErrorBadRequest)
 		return
@@ -148,7 +148,7 @@ func (h *Handlers) PutUserByID(w http.ResponseWriter, r *http.Request) {
 func (h *Handlers) DelUserByID(w http.ResponseWriter, r *http.Request) {
 
 	//получаем айди пользователя
-	userID, err := strconv.Atoi(mux.Vars(r)["userID"])
+	userID, err := strconv.ParseInt(mux.Vars(r)["userID"], 10, 64)
 	if err != nil {
 		apiErrorEncode(w, infrastruct.ErrorBadRequest)
 		return

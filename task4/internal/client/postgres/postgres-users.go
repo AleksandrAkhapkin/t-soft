@@ -46,7 +46,7 @@ func (p *Postgres) GetUserWithMaxBDay(maxBDay string) ([]types.User, error) {
 }
 
 //Получить пользователя по ID
-func (p *Postgres) GetUserByID(userID int) (*types.User, error) {
+func (p *Postgres) GetUserByID(userID int64) (*types.User, error) {
 
 	user := types.User{ID: userID}
 	err := p.db.QueryRow("SELECT name, birthday, is_male FROM tb_user5 WHERE id = $1", userID).Scan(
@@ -87,7 +87,7 @@ func (p *Postgres) PutUserByID(newUser *types.User) error {
 }
 
 //удалить пользователя
-func (p *Postgres) DelUserByID(userID int) error {
+func (p *Postgres) DelUserByID(userID int64) error {
 
 	_, err := p.db.Exec("DELETE FROM tb_user5 WHERE id = $1", userID)
 	if err != nil {
