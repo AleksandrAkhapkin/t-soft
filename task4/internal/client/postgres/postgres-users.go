@@ -11,7 +11,7 @@ func (p *Postgres) GetAllUsers() ([]types.User, error) {
 	users := make([]types.User, 0)
 	rows, err := p.db.Query("SELECT id, name, birthday, is_male FROM tb_user5 ")
 	if err != nil {
-		return nil, errors.Wrap(err, "in pg GetAllUsers with Query")
+		return nil, err
 	}
 	defer rows.Close()
 	user := types.User{}
@@ -31,7 +31,7 @@ func (p *Postgres) GetUserWithMaxBDay(maxBDay string) ([]types.User, error) {
 	users := make([]types.User, 0)
 	rows, err := p.db.Query("SELECT id, name, birthday, is_male FROM tb_user5 WHERE birthday <= $1", maxBDay)
 	if err != nil {
-		return nil, errors.Wrap(err, "in pg GetAllUsers with Query")
+		return nil, err
 	}
 	defer rows.Close()
 	user := types.User{}
@@ -55,7 +55,7 @@ func (p *Postgres) GetUserByID(userID int64) (*types.User, error) {
 		&user.IsMale,
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "in pg GetAllUsers with QueryRow")
+		return nil, err
 	}
 
 	return &user, nil
@@ -68,7 +68,7 @@ func (p *Postgres) MakeUser(newUser *types.User) (int64, error) {
 	err := p.db.QueryRow("INSERT INTO tb_user5 (name, birthday, age, is_male) VALUES ($1, $2, $3, $4) RETURNING id",
 		newUser.Name, newUser.Birthday, newUser.Age, newUser.IsMale).Scan(&userID)
 	if err != nil {
-		return 0, errors.Wrap(err, "in pq MakeUser with QueryRow")
+		return 0, err
 	}
 
 	return userID, nil
@@ -80,7 +80,7 @@ func (p *Postgres) PutUserByID(newUser *types.User) error {
 	_, err := p.db.Exec("UPDATE tb_user5 SET name = $1, birthday = $2, age = $3, is_male = $4 WHERE id = $5",
 		newUser.Name, newUser.Birthday, newUser.Age, newUser.IsMale, newUser.ID)
 	if err != nil {
-		return errors.Wrap(err, "in pq PutUserByID with Exec")
+		return err
 	}
 
 	return nil
@@ -91,7 +91,7 @@ func (p *Postgres) DelUserByID(userID int64) error {
 
 	_, err := p.db.Exec("DELETE FROM tb_user5 WHERE id = $1", userID)
 	if err != nil {
-		return errors.Wrap(err, "in pq DelUserByID with Exec")
+		return err
 	}
 
 	return nil
