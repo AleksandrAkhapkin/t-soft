@@ -80,7 +80,7 @@ func (h *Handlers) MakeUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//проверяем что значения не пустые
-	if newUser.Birthday == "" || newUser.Name == "" {
+	if newUser.Birthday == "" || newUser.Name == "" || newUser.IsMale == nil {
 		apiErrorEncode(w, infrastruct.ErrorBadRequest)
 		return
 	}
@@ -125,7 +125,7 @@ func (h *Handlers) PutUserByID(w http.ResponseWriter, r *http.Request) {
 	newUser.ID = userID
 
 	//проверяем что новые значения не пустые
-	if newUser.Birthday == "" || newUser.Name == "" {
+	if newUser.Birthday == "" || newUser.Name == "" || newUser.IsMale == nil {
 		apiErrorEncode(w, infrastruct.ErrorBadRequest)
 		return
 	}
