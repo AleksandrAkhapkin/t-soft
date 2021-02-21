@@ -10,21 +10,25 @@ import (
 	"fmt"
 	"math/bits"
 	"sync"
+	"time"
 )
 
 func main() {
 
 	var a int64
+	var sum int64
+	var position int64
+	mu := &sync.Mutex{}
+	wg := &sync.WaitGroup{}
+
 	fmt.Print("Введите число: ")
 	_, err := fmt.Scanf("%d", &a)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	var sum int64
-	var position int64
-	mu := &sync.Mutex{}
-	wg := &sync.WaitGroup{}
+
+	ts := time.Now()
 
 	for i := 0; i < 2; i++ {
 		wg.Add(1)
@@ -42,5 +46,7 @@ func main() {
 
 	wg.Wait()
 
-	fmt.Println(sum)
+	fmt.Println("Время выполнения: ", time.Since(ts))
+
+	fmt.Println("Сумма установленных байтов: ", sum)
 }
