@@ -9,11 +9,13 @@ import (
 
 //Функция рекурсивно пробегается по файлам указанной папки, а также по всем файлам всех подпапок.
 //Если будет обнаружен файл, имя которого совпадает с именем в параметре, то вернутся путь к этому файлу.
-//Если файл с указанным названием найден не был, вернется ошибка
+//Если файл с указанным названием найден не был, вернется nil
 func FindFileInDirRecursive(pathToDir, nameFile string) interface{} {
 
-	//данная функция сделанна на основе задания,
-	//я бы делал из функции возврат строки + ошибки, вместо использования интерфейса.
+	//данная функция сделана согласно поставленному заданию, однако,
+	//я бы предпочел написать функцию которая будет возвращать string и error:
+	//- В случае нахождения файла возвращать строку + nil,
+	//- В случае не найденного файла возвращать "" + error
 
 	var pathToFile string
 
@@ -24,7 +26,6 @@ func FindFileInDirRecursive(pathToDir, nameFile string) interface{} {
 					if !info.Mode().IsRegular() {
 						return nil
 					}
-					logger.LogError(errors.Wrap(err, "err with WalkFunc info == nil"))
 					return nil
 				}
 				logger.LogError(errors.Wrap(err, "err with WalkFunc"))
