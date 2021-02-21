@@ -113,6 +113,16 @@ func (s *Service) PutUserByID(newUser *types.User) error {
 
 	var err error
 
+	//необязательный блок (проверяем что пользователь которого мы хотим удалить - существует)
+	_, err = s.p.GetUserByID(newUser.ID)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			logger.LogError(errors.Wrap(err, "err in service PutUserByID "))
+			return infrastruct.ErrorInternalServerError
+		}
+		return infrastruct.ErrorUserNotFound
+	}
+
 	//задаем возраст
 	newUser.Age, err = userAgeCalculator(newUser.Birthday)
 	if err != nil {
@@ -131,6 +141,16 @@ func (s *Service) PutUserByID(newUser *types.User) error {
 
 //Удалить пользователя по айди
 func (s *Service) DelUserByID(userID int64) error {
+
+	//необязательный блок (проверяем что пользователь которого мы хотим удалить - существует)
+	_, err := s.p.GetUserByID(userID)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			logger.LogError(errors.Wrap(err, "err in service DelUserByID "))
+			return infrastruct.ErrorInternalServerError
+		}
+		return infrastruct.ErrorUserNotFound
+	}
 
 	//удаляем пользователя по айди
 	if err := s.p.DelUserByID(userID); err != nil {
