@@ -43,6 +43,7 @@ func SortHumansByAge(minAge uint, humans []types.Human) []types.Human {
 //Функция генерирует случайные имена
 func randomName() (string, error) {
 
+	//Обращаемся к API и получаем случайные имена :)
 	res, err := http.Get("https://api.randomdatatools.ru")
 	if err != nil {
 		return "", errors.Wrap(err, "with http.Get")
