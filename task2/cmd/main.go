@@ -7,8 +7,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/AleksandrAkhapkin/testTNS/task2/internal/service"
 	"github.com/AleksandrAkhapkin/testTNS/task2/pkg/logger"
+	"github.com/AleksandrAkhapkin/testTNS/task2/service"
 	"github.com/pkg/errors"
 	"strings"
 )
