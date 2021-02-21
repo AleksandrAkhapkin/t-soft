@@ -21,6 +21,6 @@ func (c *CustomError) Error() string {
 var (
 	ErrorInternalServerError = NewError("Внутренняя ошибка сервера", http.StatusInternalServerError)
 	ErrorBadRequest          = NewError("Плохие входные данные", http.StatusBadRequest)
-	ErrorUserNotFound        = NewError("Результаты по вашему запросу не найдены", http.StatusOK)
+	ErrorUserNotFound        = NewError("Пользователь по вашему запросу не найден", http.StatusOK)
 	ErrorDataIsInvalid       = NewError("Некорректная дата, формата ввода даты рождения: \"2020-12-30\"", http.StatusBadRequest)
 )
