@@ -37,10 +37,7 @@ func main() {
 		logger.LogFatal(errors.Wrap(err, "err with NewPostgres"))
 	}
 
-	srv, err := service.NewService(pq)
-	if err != nil {
-		logger.LogFatal(errors.Wrap(err, "err with NewService"))
-	}
+	srv := service.NewService(pq)
 
 	handls := handlers.NewHandlers(srv)
 
